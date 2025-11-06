@@ -1,35 +1,74 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { APP_TINT, TAB_BAR_COLOR, WHITE } from "@/constants/colors";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Octicons from "@expo/vector-icons/Octicons";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Tabs } from "expo-router";
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        tabBarActiveTintColor: APP_TINT,
+        tabBarInactiveTintColor: WHITE,
+        tabBarStyle: {
+          backgroundColor: TAB_BAR_COLOR,
+          height: 90,
+          paddingTop: 10,
+          borderTopColor: "transparent",
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color, focused }) => (
+            <Octicons
+              name={focused ? "home-fill" : "home"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="search"
+        options={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <AntDesign name="search" size={24} color={color} />
+            ) : (
+              <Octicons name="search" size={24} color={color} />
+            ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="bookmarks"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color, focused }) => (
+            <Octicons
+              name={focused ? "bookmark-filled" : "bookmark"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="discover"
+        options={{
+          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>
   );
 }
+
+export default TabLayout;

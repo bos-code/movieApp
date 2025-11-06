@@ -1,0 +1,9 @@
+export const APP_TINT = "#FFC700";
+export const BACKGROUND_COLOR = "#111111";
+export const TAB_BAR_COLOR = "#0B0B0B";
+export const WHITE = "#FFFFFF";
+export const GRAY = "#424242";
+export const CLIP_GRAY = "#2A2A2A";
+export const LIGHT_GRAY = "#aaaaaa";
+export const TEXT_GRAY = "#888888";
+export const blurhash = "LFEfTij[fQj[00fQfQfQayfQfQfQ";
