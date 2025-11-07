@@ -25,10 +25,13 @@ export default function RatingComponent({
         marginBottom: -5,
       }}
     >
-      <Text style={{ color: WHITE, fontSize: textSize }}> {safeRating}</Text>
+      <Text style={{ color: WHITE, fontSize: textSize }}>
+        {" "}
+        {safeRating.toFixed(1)}
+      </Text>
       <Rating
         type="custom"
-        fractions={2}
+        fractions={0}
         ratingCount={count}
         startingValue={safeRating}
         imageSize={size}

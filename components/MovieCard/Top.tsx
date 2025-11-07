@@ -1,6 +1,6 @@
 import { WHITE, blurhash } from "@/constants/colors";
+import useExtraData from "@/hooks/TS";
 import { useTMDB } from "@/hooks/useFetchMovieDate";
-import useExtraData from "@/TS";
 import { Image } from "expo-image";
 import React from "react";
 import {
@@ -15,14 +15,14 @@ import Bookmark from "../common/Bookmark";
 import RatingComponent from "../common/Rating";
 
 export default function Top() {
-  const result = useExtraData();
+  const result = useExtraData("movie/now_playing");
 
   // const { data, isLoading } = useTMDB("movie/now_playing");
   const { data, isLoading } = useTMDB("tv/airing_today");
 
   if (isLoading) {
     return (
-      <View style={styles.loadingWrap}>
+      <View style={{ ...styles.loadingWrap, ...styles.imageWrap }}>
         <ActivityIndicator />
       </View>
     );

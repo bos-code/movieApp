@@ -1,4 +1,4 @@
-import { MediaType } from "@/TS";
+import { MediaType } from "@/hooks/TS";
 import { useRouter } from "expo-router";
 
 export function useOpenDetails() {
