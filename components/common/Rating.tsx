@@ -28,7 +28,7 @@ export default function RatingComponent({
       <Text style={{ color: WHITE, fontSize: textSize }}> {safeRating}</Text>
       <Rating
         type="custom"
-        fractions={1}
+        fractions={2}
         ratingCount={count}
         startingValue={safeRating}
         imageSize={size}

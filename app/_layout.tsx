@@ -20,10 +20,10 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
-      </QueryClientProvider>
-    </Stack>
+      </Stack>
+    </QueryClientProvider>
   );
 }
