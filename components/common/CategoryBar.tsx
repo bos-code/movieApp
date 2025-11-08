@@ -1,3 +1,4 @@
+import { useAllGenres } from "@/hooks/useGenre";
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { CategoryPill } from "../MovieCard/CategoryPill";
@@ -5,14 +6,13 @@ import { CategoryPill } from "../MovieCard/CategoryPill";
 export default function CategoryBar() {
   const [active, setActive] = React.useState("Action");
 
-  const categories = [
-    { label: "All" },
-    { label: "Animation", count: 0 },
-    { label: "Action", count: 3 },
-    { label: "Comedy" },
-    { label: "Comed" },
-    { label: "Comdy" },
-  ];
+  const { data } = useAllGenres();
+
+  const genres = Object.entries(data).map(([id:Number, name:string]) => ({
+    id: id,
+    name,
+  }));
+  const categories = 
 
   return (
     <View>
@@ -22,13 +22,12 @@ export default function CategoryBar() {
         style={{ marginTop: 15 }}
       >
         <View style={{ flexDirection: "row", gap: 10 }}>
-          {categories.map((cat) => (
+          {genres.map((cat) => (
             <CategoryPill
-              key={cat.label}
-              label={cat.label}
-              count={cat.count}
-              active={active === cat.label}
-              onPress={() => setActive(cat.label)}
+              key={cat.id}
+              label={cat.name}
+              active={active === cat.name}
+              onPress={() => setActive(cat.name)}
             />
           ))}
         </View>
