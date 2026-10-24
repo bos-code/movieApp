@@ -1,6 +1,8 @@
 import { APP_TINT, blurhash, TEXT_GRAY, WHITE } from "@/constants/colors";
-import { useTMDB } from "@/hooks/useFetchMovieDate";
-import { useAllGenres } from "@/hooks/useGenre"; // <-- ensure path matches where you saved the hook
+import { useOpenDetails } from "@/hooks/use-open-details";
+import { useAllGenres, useTMDBList } from "@/hooks/use-tmdb";
+import { imageUrl } from "@/lib/tmdb";
+import { MediaSummary, mediaTitle } from "@/types/tmdb";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -26,10 +28,10 @@ const IMAGE_HEIGHT = 260;
 
 export default function Latest() {
   const router = useRouter();
-  const { data, isLoading } = useTMDB("movie/upcoming");
+  const { onOpenDetails } = useOpenDetails();
+  const { results: movies, isLoading } = useTMDBList("movie/upcoming");
   const { data: GENRES, isLoading: genresLoading } = useAllGenres();
 
-  const movies = data?.results ?? [];
   const onSeeMorePress = () => router.push("/discover");
 
   // Combined loading: show loader while either movies or genres are loading
@@ -41,18 +43,13 @@ export default function Latest() {
     );
   }
 
-  const renderItem = ({ item: movie }) => {
-    const imageUrl = movie?.backdrop_path
-      ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
-      : "./../../assets/images/react-logo@2x.png"; // local asset fallback (require)
-
-    const title = movie?.title ?? movie?.name ?? "Untitled";
-    const rating = movie?.vote_average ? movie.vote_average / 2 : 0;
-    const description = movie?.overview ?? "No description available.";
+  const renderItem = ({ item: movie }: { item: MediaSummary }) => {
+    const rating = movie.vote_average ? movie.vote_average / 2 : 0;
+    const description = movie.overview ?? "No description available.";
 
     // safe mapping — if GENRES not ready, show empty string
     const genreText = GENRES
-      ? (movie?.genre_ids ?? [])
+      ? (movie.genre_ids ?? [])
           .map((id) => GENRES[id])
           .filter(Boolean)
           .slice(0, 3)
@@ -60,23 +57,23 @@ export default function Latest() {
       : "";
 
     return (
-      <View style={styles.card}>
+      <Pressable style={styles.card} onPress={() => onOpenDetails(movie.id)}>
         <View style={styles.cardImageWrapper}>
           <Image
             style={styles.image}
-            source={imageUrl}
+            source={imageUrl(movie.poster_path, "w342")}
             placeholder={{ blurhash }}
             contentFit="cover"
-            transition={1000}
+            transition={300}
           />
           <View style={styles.bookmarkContainer}>
-            <Bookmark />
+            <Bookmark item={movie} />
           </View>
         </View>
 
         <View style={styles.textbox}>
           <Text style={styles.title} numberOfLines={2}>
-            {title}
+            {mediaTitle(movie)}
           </Text>
 
           <RatingComponent size={20} textSize={20} rating={rating} />
@@ -87,7 +84,7 @@ export default function Latest() {
             {description}
           </Text>
         </View>
-      </View>
+      </Pressable>
     );
   };
 

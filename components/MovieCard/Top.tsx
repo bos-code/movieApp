@@ -1,6 +1,8 @@
 import { WHITE, blurhash } from "@/constants/colors";
-import useExtraData from "@/hooks/TS";
-import { useTMDB } from "@/hooks/useFetchMovieDate";
+import { useOpenDetails } from "@/hooks/use-open-details";
+import { useTMDBList } from "@/hooks/use-tmdb";
+import { imageUrl } from "@/lib/tmdb";
+import { MediaSummary, mediaTitle } from "@/types/tmdb";
 import { Image } from "expo-image";
 import React from "react";
 import {
@@ -15,10 +17,8 @@ import Bookmark from "../common/Bookmark";
 import RatingComponent from "../common/Rating";
 
 export default function Top() {
-  const result = useExtraData("movie/now_playing");
-
-  // const { data, isLoading } = useTMDB("movie/now_playing");
-  const { data, isLoading } = useTMDB("tv/airing_today");
+  const { onOpenDetails } = useOpenDetails();
+  const { results: movies, isLoading } = useTMDBList("trending/movie/week");
 
   if (isLoading) {
     return (
@@ -27,54 +27,39 @@ export default function Top() {
       </View>
     );
   }
-  const res = data?.results ?? [];
 
-  const movies = [...res, ...result];
-
-  const renderItem = ({ item: movie }) => {
-    const imageUrl = movie?.backdrop_path
-      ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
-      : "https://via.placeholder.com/500x281?text=No+Image";
-
-    return (
-      <Pressable
-        style={styles.card}
-        onPress={() => {
-          console.log("movie pressed => ", movie.id, movie.title);
-        }}
-      >
-        <View style={styles.imageWrap}>
-          <Image
-            style={styles.image}
-            source={imageUrl}
-            placeholder={{ blurhash }}
-            contentFit="cover"
-            transition={1000}
-          />
-          <View style={styles.bookmarkContainer}>
-            <Bookmark />
-          </View>
+  const renderItem = ({ item: movie }: { item: MediaSummary }) => (
+    <Pressable style={styles.card} onPress={() => onOpenDetails(movie.id)}>
+      <View style={styles.imageWrap}>
+        <Image
+          style={styles.image}
+          source={imageUrl(movie.backdrop_path)}
+          placeholder={{ blurhash }}
+          contentFit="cover"
+          transition={300}
+        />
+        <View style={styles.bookmarkContainer}>
+          <Bookmark item={movie} />
         </View>
+      </View>
 
-        <View style={styles.meta}>
-          <Text style={styles.title} numberOfLines={2}>
-            {movie?.title ?? movie?.name ?? "Untitled"}
-          </Text>
-
-          <RatingComponent
-            size={18}
-            textSize={14}
-            rating={(movie?.vote_average ?? 0) / 2}
-          />
-        </View>
-      </Pressable>
-    );
-  };
+      <View style={styles.meta}>
+        <Text style={styles.title} numberOfLines={2}>
+          {mediaTitle(movie)}
+        </Text>
+        <RatingComponent
+          size={18}
+          textSize={14}
+          rating={(movie.vote_average ?? 0) / 2}
+        />
+      </View>
+    </Pressable>
+  );
 
   return (
     <View style={styles.wrapper}>
       <FlatList
-        data={movies}
+        data={movies.slice(0, 10)}
         keyExtractor={(item) => String(item.id)}
         renderItem={renderItem}
         horizontal
@@ -139,30 +124,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     gap: 15,
-//     marginTop: 20,
-//   },
-
-//   image: {
-//     width: 300,
-//     height: 200,
-//     borderRadius: 15,
-//   },
-
-//   title: {
-//     fontSize: 20,
-//     fontWeight: "bold",
-//     color: WHITE,
-//   },
-
-//   rating: {
-//     flex: 1,
-//     alignItems: "flex-start",
-//     flexDirection: "row",
-//     gap: 10,
-//   },
-// });
