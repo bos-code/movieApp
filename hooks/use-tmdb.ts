@@ -17,8 +17,12 @@ export function useTMDB<TData = unknown>(
 }
 
 /** Results array of a paginated list endpoint ([] while loading/errored). */
-export function useTMDBList(endpoint: string, params?: TMDBParams) {
-  const query = useTMDB<Paginated<MediaSummary>>(endpoint, params);
+export function useTMDBList(
+  endpoint: string,
+  params?: TMDBParams,
+  options?: { enabled?: boolean }
+) {
+  const query = useTMDB<Paginated<MediaSummary>>(endpoint, params, options);
   return { ...query, results: query.data?.results ?? [] };
 }
 
